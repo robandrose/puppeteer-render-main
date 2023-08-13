@@ -22,7 +22,6 @@ export const scrapeLogic = async (res: Response) => {
       margin: { top: "0mm", right: "0mm", bottom: "0mm", left: "0mm" },
     });
 
-    browser.close();
     //res.header('Content-Disposition: attachment; filename="whatever.pdf"');
     res.header("Content-Type", "application/pdf");
     res.send(pdfres);
