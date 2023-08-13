@@ -11,24 +11,26 @@ export const scrapeLogic = async (res: Response) => {
         ? process.env.PUPPETEER_EXECUTABLE_PATH
         : puppeteer.executablePath(),
   });
+  let pdfres = {};
   try {
     const page = await browser.newPage();
-
     const url = "https://www.robandrose.ch";
+
     await page.goto(url, { waitUntil: "networkidle2" });
-    const pdfres = await page.pdf({
+
+    pdfres = await page.pdf({
       format: "A4",
       landscape: false,
       margin: { top: "0mm", right: "0mm", bottom: "0mm", left: "0mm" },
     });
 
     //res.header('Content-Disposition: attachment; filename="whatever.pdf"');
-    res.header("Content-Type", "application/pdf");
-    res.send(pdfres);
   } catch (e) {
     console.error(e);
     res.send(`Something went wrong while running Puppeteer: ${e}`);
   } finally {
     await browser.close();
+    res.header("Content-Type", "application/pdf");
+    res.send(pdfres);
   }
 };
