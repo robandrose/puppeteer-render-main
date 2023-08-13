@@ -12,25 +12,26 @@ export const scrapeLogic = async (res: Response) => {
         : puppeteer.executablePath(),
   });
   let pdfres = {};
+
+  const url = "https://www.robandrose.ch";
+
   try {
     const page = await browser.newPage();
-    const url = "https://www.robandrose.ch";
-
     await page.goto(url, { waitUntil: "networkidle2" });
+    await page.waitForNetworkIdle();
 
     pdfres = await page.pdf({
       format: "A4",
       landscape: false,
       margin: { top: "0mm", right: "0mm", bottom: "0mm", left: "0mm" },
     });
-
+    res.header("Content-Type", "application/pdf");
+    res.send(pdfres);
     //res.header('Content-Disposition: attachment; filename="whatever.pdf"');
   } catch (e) {
     console.error(e);
     res.send(`Something went wrong while running Puppeteer: ${e}`);
   } finally {
     await browser.close();
-    res.header("Content-Type", "application/pdf");
-    res.send(pdfres);
   }
 };
